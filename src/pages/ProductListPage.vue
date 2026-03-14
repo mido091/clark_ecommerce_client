@@ -226,6 +226,11 @@ const loadMoreSentinel = ref(null);
 const searchQuery = ref(route.query.name || "");
 const selectedCategory = ref(route.query.category_id || "");
 
+// Sync with route changes (for header search)
+watch(() => route.query.name, (newName) => {
+  searchQuery.value = newName || "";
+});
+
 /**
  * Filtered Products:
  * Now just returns the reactive products array fetched from the backend.

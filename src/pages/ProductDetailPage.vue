@@ -431,7 +431,7 @@ import { useAuthStore } from "@/stores/auth.js";
 import { useSEO } from "@/composables/useSEO.js";
 import api from "@/axios.js";
 
-const { setMeta } = useSEO();
+const { setMeta, setJsonLd } = useSEO();
 const route = useRoute();
 const { t } = useI18n();
 const cart = useCartStore();
@@ -491,7 +491,29 @@ onMounted(async () => {
     product.value = data.data;
 
     // Update SEO Meta Tags
-    setMeta(displayName.value, displayDescription.value);
+    setMeta(
+      displayName.value, 
+      displayDescription.value, 
+      product.value.main_image,
+      window.location.href
+    );
+
+    // Inject JSON-LD for Product
+    setJsonLd({
+      "@context": "https://schema.org/",
+      "@type": "Product",
+      "name": displayName.value,
+      "image": [product.value.main_image],
+      "description": displayDescription.value,
+      "sku": product.value.id,
+      "offers": {
+        "@type": "Offer",
+        "url": window.location.href,
+        "priceCurrency": "USD",
+        "price": product.value.price,
+        "availability": product.value.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+      }
+    });
 
     if (product.value.images && product.value.images.length > 0) {
       product.value.images = product.value.images.map((img, i) =>

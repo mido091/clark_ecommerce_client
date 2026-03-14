@@ -6,7 +6,7 @@
   >
     <!-- Product Image (aspect-square) -->
     <div
-      class="relative overflow-hidden aspect-[4/5] sm:aspect-square w-full bg-surface dark:bg-black/50"
+      class="relative overflow-hidden aspect-square w-full bg-surface dark:bg-black/50"
     >
       <!-- Skeleton Shimmer Overlay (CLS Prevention) -->
       <div
@@ -18,18 +18,14 @@
         />
       </div>
 
-      <img
+      <OptimizedImage
         :src="optimizedImageUrl"
         :alt="displayName"
-        width="400"
-        height="500"
-        class="w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-110"
-        :class="imageLoaded ? 'opacity-100' : 'opacity-0'"
+        :aspect-ratio="'1/1'"
+        container-class="w-full h-full"
+        img-class="transition-all duration-700 ease-out group-hover:scale-110"
         :loading="priority ? 'eager' : 'lazy'"
-        :fetchpriority="priority ? 'high' : 'auto'"
-        decoding="async"
-        @load="imageLoaded = true"
-        @error="onImageError"
+        :priority="priority"
       />
 
       <!-- Wishlist Button -->
@@ -113,7 +109,7 @@
 
     <!-- Info Box -->
     <div
-      class="flex flex-col gap-1 p-5 flex-1"
+      class="flex flex-col gap-0.5 p-3 sm:p-5 flex-1"
       :class="[ui.locale === 'ar' ? 'text-right' : 'text-left']"
     >
       <p
@@ -122,7 +118,7 @@
         {{ ui.locale === 'ar' && product.category_name_ar ? product.category_name_ar : product.category_name }}
       </p>
       <h3
-        class="font-semibold text-textPrimary text-base line-clamp-2 transition-colors duration-300 group-hover:text-primary-600 dark:group-hover:text-primary-400 mt-1"
+        class="font-semibold text-textPrimary text-sm sm:text-base line-clamp-2 transition-colors duration-300 group-hover:text-primary-600 dark:group-hover:text-primary-400 mt-1"
       >
         {{ displayName }}
       </h3>
@@ -147,8 +143,8 @@
         >
       </div>
 
-      <div class="mt-auto pt-3 flex items-center gap-3">
-        <span class="text-lg font-extrabold text-textPrimary shrink-0">
+      <div class="mt-auto pt-2 sm:pt-3 flex items-center gap-3">
+        <span class="text-base sm:text-lg font-extrabold text-textPrimary shrink-0">
           ${{ Number(product.price).toFixed(2) }}
         </span>
         <span v-if="product.old_price" class="text-xs font-semibold text-red-500 line-through opacity-70">
@@ -163,6 +159,7 @@
 import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { ShoppingCart, Heart, Star } from "lucide-vue-next";
+import OptimizedImage from "@/components/OptimizedImage.vue";
 import { useCartStore } from "@/stores/cart.js";
 import { useUiStore } from "@/stores/ui.js";
 import { useWishlistStore } from "@/stores/wishlist.js";
@@ -273,7 +270,13 @@ function onImageError(e) {
 <style scoped>
 /* Critical Layout Styles - Loads immediately with the component */
 .product-card-container {
-  min-height: 480px; /* Reduces layout shift before content loads */
+  min-height: 320px; /* Reduced for mobile */
+}
+
+@media (min-width: 640px) {
+  .product-card-container {
+    min-height: 480px;
+  }
 }
 
 @keyframes shimmer {

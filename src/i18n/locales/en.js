@@ -12,6 +12,7 @@ export default {
     admin: "Admin Panel",
     dashboard: "Dashboard",
     profile: "Profile",
+    wishlist: "Wishlist",
   },
  
   // ── Footer ────────────────────────────────────────────────

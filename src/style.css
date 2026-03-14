@@ -96,10 +96,18 @@
   /* Cards */
   .card {
     @apply bg-surface rounded-3xl shadow-soft dark:shadow-dark-soft border border-borderThin transition-all duration-300 overflow-hidden;
+    contain: layout paint;
   }
 
   .card-hover {
     @apply card hover:shadow-soft-lg dark:hover:shadow-dark-soft-lg hover:-translate-y-1;
+    will-change: transform, shadow;
+  }
+
+  .product-card-container {
+    contain: layout paint;
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 480px;
   }
 
   /* Forms */

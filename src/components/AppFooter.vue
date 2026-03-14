@@ -174,14 +174,21 @@
       </div>
  
       <div
-        class="border-t border-borderThin pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 font-medium"
+        class="border-t border-white/5 pt-8 flex flex-col sm:flex-row items-center justify-between gap-6 font-medium"
       >
-        <p class="text-xs sm:text-sm">
+        <p class="text-xs sm:text-sm text-slate-500">
           © {{ currentYear }} {{ settingsStore.siteName || "ShopWave" }}. {{ $t("footer.rights") }}
         </p>
-        <div class="flex items-center gap-1.5 text-xs sm:text-sm">
-          {{ $t("footer.builtWith") }} <Heart class="w-4 h-4 text-red-500 fill-red-500" /> &
-          Tailwind CSS
+        
+        <div class="flex flex-col items-center sm:items-end gap-2">
+          <div class="flex items-center gap-1.5 text-xs sm:text-sm text-slate-300">
+            <span>{{ ui.locale === 'ar' ? 'تم التطوير بواسطة' : 'Developed by' }}</span>
+            <span class="font-bold text-primary-400">Mido</span>
+          </div>
+          <div class="flex flex-col items-center sm:items-end gap-1 text-[11px] text-slate-500">
+            <a href="tel:+201551683581" class="hover:text-primary-400 transition-colors tracking-wider">+201551683581</a>
+            <a href="mailto:midoproblems091@gmail.com" class="hover:text-primary-400 transition-colors">midoproblems091@gmail.com</a>
+          </div>
         </div>
       </div>
     </div>
@@ -202,8 +209,10 @@ import {
 } from "lucide-vue-next";
 import { useAuthStore } from "@/stores/auth.js";
 import { useSettingsStore } from "@/stores/settings.js";
+import { useUiStore } from "@/stores/ui.js";
 
 const auth = useAuthStore();
 const settingsStore = useSettingsStore();
+const ui = useUiStore();
 const currentYear = new Date().getFullYear();
 </script>

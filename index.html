@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" dir="ltr">
+<html>
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
@@ -9,13 +9,22 @@
       content="Premium E-Commerce Store — Shop Electronics, Fashion, and More"
     />
     <title>E-Commerce Store</title>
-    <!-- Google Fonts: Inter/Cairo (Body) + Cormorant Garamond/Amiri (Headings) -->
+    <!-- Font Preloading -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cairo:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@400;500;600;700&family=Amiri:wght@400;700&family=Almarai:wght@400;700&display=swap"
       rel="stylesheet"
     />
+    <script>
+      (function() {
+        const locale = localStorage.getItem('locale') || 'en';
+        document.documentElement.dir = locale === 'ar' ? 'rtl' : 'ltr';
+        document.documentElement.lang = locale;
+        const dark = localStorage.getItem('darkMode') === 'true';
+        if (dark) document.documentElement.classList.add('dark');
+      })();
+    </script>
   </head>
   <body>
     <div id="app"></div>

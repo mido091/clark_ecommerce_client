@@ -29,9 +29,10 @@
 <script setup>
 import { computed, provide, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
+import { defineAsyncComponent } from "vue";
 import AppHeader from "@/components/AppHeader.vue";
-import AppFooter from "@/components/AppFooter.vue";
-import GlobalUIManager from "@/components/GlobalUIManager.vue";
+const AppFooter = defineAsyncComponent(() => import("@/components/AppFooter.vue"));
+const GlobalUIManager = defineAsyncComponent(() => import("@/components/GlobalUIManager.vue"));
 import { useSettingsStore } from "@/stores/settings.js";
 import { useScriptInjector } from "@/composables/useScriptInjector.js";
 import { useUI } from "@/composables/useUI.js";
@@ -55,13 +56,21 @@ onMounted(async () => {
   await settingsStore.fetchSettings();
   wishlistStore.fetchWishlistIds();
 
-  // Inject tracking/ads scripts once per session
-  injectScripts(
-    settingsStore.headerScripts,
-    settingsStore.footerScripts,
-    settingsStore.settings?.google_analytics_id,
-    settingsStore.settings?.google_ads_client_id,
-  );
+  // Defer non-critical scripts (tracking/ads) to improve Total Blocking Time
+  const deferScripts = () => {
+    injectScripts(
+      settingsStore.headerScripts,
+      settingsStore.footerScripts,
+      settingsStore.settings?.google_analytics_id,
+      settingsStore.settings?.google_ads_client_id,
+    );
+  };
+
+  if (window.requestIdleCallback) {
+    window.requestIdleCallback(deferScripts);
+  } else {
+    setTimeout(deferScripts, 3000);
+  }
 });
 
 // ── Reactive document.title ────────────────────────────────

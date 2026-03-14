@@ -7,29 +7,9 @@
     ]"
   >
     <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-3 items-center h-20 gap-4">
-        <!-- ── Left: Desktop nav links ─────────────────────────────── -->
-        <nav class="hidden md:flex items-center justify-start gap-8">
-          <RouterLink
-            v-for="link in navLinks"
-            :key="link.to"
-            :to="link.to"
-            class="group relative py-2 text-sm font-semibold text-textSecondary hover:text-primary-600 dark:hover:text-primary-400 transition-colors uppercase tracking-widest"
-            active-class="text-primary-600 dark:text-primary-400 font-extrabold"
-          >
-            {{ link.label }}
-            <!-- Underline Reveal -->
-            <span
-              class="absolute left-0 bottom-0 w-0 h-[2px] bg-primary-500 transition-all duration-300 group-hover:w-full"
-              :class="{ 'w-full': route.path === link.to }"
-            ></span>
-          </RouterLink>
-        </nav>
-
-        <!-- ── Center: Logo ─────────────────────────────────────────── -->
-        <div
-          class="flex justify-start md:justify-center col-span-2 md:col-span-1"
-        >
+      <div class="flex items-center justify-between h-20 gap-4">
+        <!-- ── Left: Logo & Nav ─────────────────────────────────────────── -->
+        <div class="flex items-center gap-8 shrink-0">
           <RouterLink
             to="/"
             class="flex items-center gap-2 font-extrabold text-xl shrink-0 transition-transform duration-300 hover:scale-105"
@@ -37,19 +17,61 @@
             <img
               v-if="settings.logoUrl"
               :src="settings.logoUrl"
-              :alt="settings.siteName"
-              class="h-8 w-auto object-contain dark:invert"
+              :alt="settings.siteName || 'ShopWave'"
+              class="h-8 w-auto min-w-[32px] object-contain dark:invert"
+              width="120"
+              height="32"
             />
             <ShoppingBag v-else class="w-7 h-7 text-primary-500" />
             <span
-              class="hidden sm:inline font-bold text-2xl tracking-tight text-textPrimary"
+              class="hidden lg:inline font-bold text-2xl tracking-tight text-textPrimary h-8 flex items-center"
               >{{ settings.siteName || "ShopWave" }}</span
             >
           </RouterLink>
+
+          <!-- Desktop Navigation -->
+          <nav class="hidden xl:flex items-center gap-6">
+            <RouterLink
+              v-for="link in navLinks"
+              :key="link.to"
+              :to="link.to"
+              class="group relative py-2 text-sm font-semibold text-textSecondary hover:text-primary-600 dark:hover:text-primary-400 transition-colors uppercase tracking-widest"
+              active-class="text-primary-600 dark:text-primary-400 font-extrabold"
+            >
+              {{ link.label }}
+              <span
+                class="absolute left-0 bottom-0 w-0 h-[2px] bg-primary-500 transition-all duration-300 group-hover:w-full"
+                :class="{ 'w-full': route.path === link.to }"
+              ></span>
+            </RouterLink>
+          </nav>
         </div>
 
-        <!-- ── Right: controls ───────────────────────────────── -->
-        <div class="flex items-center justify-end gap-2 sm:gap-4 col-span-1">
+        <!-- ── Center: Search Bar (Desktop) ────────────────────────────── -->
+        <div class="hidden md:flex flex-1 max-w-md mx-4">
+          <form @submit.prevent="performSearch" class="relative w-full group">
+            <div class="absolute inset-y-0 start-0 flex items-center ps-4 pointer-events-none">
+              <Search class="w-4 h-4 text-textSecondary group-focus-within:text-primary-500 transition-colors" />
+            </div>
+            <input
+              v-model="headerSearchQuery"
+              type="text"
+              :placeholder="$t('products.searchPlaceholder') || 'Search products...'"
+              class="w-full bg-slate-100 dark:bg-slate-800/50 border border-transparent focus:border-primary-500/50 focus:bg-white dark:focus:bg-slate-800 py-2.5 ps-11 pe-4 rounded-2xl text-sm font-medium transition-all outline-none"
+            />
+          </form>
+        </div>
+
+        <!-- ── Right: Controls ───────────────────────────────── -->
+        <div class="flex items-center justify-end gap-1 sm:gap-2">
+          <!-- Mobile Search Toggle -->
+          <button
+            @click="showMobileSearch = !showMobileSearch"
+            class="md:hidden flex items-center justify-center min-w-[44px] min-h-[44px] p-2 rounded-xl text-textSecondary hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+            :aria-label="$t('common.search')"
+          >
+            <Search class="w-5 h-5" />
+          </button>
           <!-- Language toggle -->
           <button
             @click="toggleLocale"
@@ -62,10 +84,9 @@
           <!-- Dark/Light mode -->
           <button
             @click="ui.toggleDark()"
-            class="hidden sm:flex items-center justify-center p-2 rounded-xl text-textSecondary hover:bg-black/5 dark:hover:bg-white/10 hover:text-primary-500 transition-colors"
-            :title="
-              ui.darkMode ? $t('common.lightMode') : $t('common.darkMode')
-            "
+            class="hidden sm:flex items-center justify-center min-w-[48px] min-h-[48px] p-2 rounded-xl text-textSecondary hover:bg-black/5 dark:hover:bg-white/10 hover:text-primary-500 transition-colors"
+            :aria-label="ui.darkMode ? $t('common.lightMode') : $t('common.darkMode')"
+            :title="ui.darkMode ? $t('common.lightMode') : $t('common.darkMode')"
           >
             <Sun v-if="ui.darkMode" class="w-5 h-5" />
             <Moon v-else class="w-5 h-5" />
@@ -74,12 +95,13 @@
           <!-- Wishlist icon -->
           <RouterLink
             to="/wishlist"
-            class="relative flex items-center justify-center p-2 rounded-xl text-textSecondary hover:bg-black/5 dark:hover:bg-white/10 hover:text-pink-500 transition-colors"
+            class="relative flex items-center justify-center min-w-[48px] min-h-[48px] p-2 rounded-xl text-textSecondary hover:bg-black/5 dark:hover:bg-white/10 hover:text-pink-500 transition-colors"
+            :aria-label="$t('nav.wishlist')"
           >
             <Heart class="w-5 h-5" />
             <span
               v-if="wishlist.count > 0"
-              class="absolute top-0 right-0 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-pink-500 text-white text-[10px] font-bold px-1 animate-bounce-in shadow-sm"
+              class="absolute top-1 right-1 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-pink-500 text-white text-[10px] font-bold px-1 animate-bounce-in shadow-sm"
             >
               {{ wishlist.count }}
             </span>
@@ -88,12 +110,13 @@
           <!-- Cart icon -->
           <RouterLink
             to="/cart"
-            class="relative flex items-center justify-center p-2 rounded-xl text-textSecondary hover:bg-black/5 dark:hover:bg-white/10 hover:text-primary-500 transition-colors"
+            class="relative flex items-center justify-center min-w-[48px] min-h-[48px] p-2 rounded-xl text-textSecondary hover:bg-black/5 dark:hover:bg-white/10 hover:text-primary-500 transition-colors"
+            :aria-label="$t('nav.cart')"
           >
             <ShoppingCart class="w-5 h-5" />
             <span
               v-if="cart.itemCount > 0"
-              class="absolute top-0 right-0 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-primary-500 text-white text-[10px] font-bold px-1 animate-bounce-in shadow-sm"
+              class="absolute top-1 right-1 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-primary-500 text-white text-[10px] font-bold px-1 animate-bounce-in shadow-sm"
             >
               {{ cart.itemCount }}
             </span>
@@ -211,14 +234,34 @@
           <!-- Mobile menu button -->
           <button
             @click="mobileOpen = !mobileOpen"
-            class="md:hidden flex items-center justify-center p-2 rounded-xl text-textSecondary hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+            class="md:hidden flex items-center justify-center min-w-[48px] min-h-[48px] p-2 rounded-xl text-textSecondary hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+            :aria-label="mobileOpen ? 'Close Menu' : 'Open Menu'"
           >
             <Menu v-if="!mobileOpen" class="w-6 h-6" />
             <X v-else class="w-6 h-6" />
           </button>
-        </div>
       </div>
     </div>
+  </div>
+
+  <!-- ── Mobile Search Bar (Expandable) ────────────────────────── -->
+    <Transition name="search-slide">
+      <div 
+        v-if="showMobileSearch" 
+        class="md:hidden bg-background border-t border-borderThin p-3 animate-in slide-in-from-top duration-300"
+      >
+        <form @submit.prevent="performSearch" class="relative group">
+          <Search class="absolute start-4 top-1/2 -translate-y-1/2 w-4 h-4 text-textSecondary font-bold" />
+          <input
+            v-model="headerSearchQuery"
+            type="text"
+            ref="mobileSearchInput"
+            :placeholder="$t('products.searchPlaceholder') || 'Search products...'"
+            class="w-full bg-slate-100 dark:bg-slate-800/80 py-3 ps-11 pe-4 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-primary-500/30"
+          />
+        </form>
+      </div>
+    </Transition>
 
     <!-- ── Mobile drawer ─────────────────────────────────────── -->
     <Transition name="mobile-menu">
@@ -354,7 +397,7 @@
 </template>
 
 <script setup>
-import { ref, computed, inject, onMounted, onBeforeUnmount } from "vue";
+import { ref, computed, inject, onMounted, onBeforeUnmount, nextTick, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import {
@@ -370,6 +413,7 @@ import {
   UserCircle,
   ChevronDown,
   Heart,
+  Search,
 } from "lucide-vue-next";
 import { useAuthStore } from "@/stores/auth.js";
 import { useCartStore } from "@/stores/cart.js";
@@ -388,6 +432,9 @@ const wishlist = useWishlistStore();
 const showToast = inject("showToast");
 
 const mobileOpen = ref(false);
+const showMobileSearch = ref(false);
+const headerSearchQuery = ref("");
+const mobileSearchInput = ref(null);
 const dropdownOpen = ref(false);
 const dropdownRef = ref(null);
 
@@ -471,6 +518,23 @@ function handleLogout() {
   router.push({ name: "home" });
   showToast?.(t("auth.logoutSuccess"), "info");
 }
+
+function performSearch() {
+  if (!headerSearchQuery.value.trim()) return;
+  router.push({
+    path: "/products",
+    query: { name: headerSearchQuery.value.trim() },
+  });
+  showMobileSearch.value = false;
+  mobileOpen.value = false;
+}
+
+watch(showMobileSearch, async (val) => {
+  if (val) {
+    await nextTick();
+    mobileSearchInput.value?.focus();
+  }
+});
 </script>
 
 <style scoped>

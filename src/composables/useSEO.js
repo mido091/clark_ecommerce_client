@@ -1,51 +1,74 @@
-import { watch } from "vue";
-import { useSettingsStore } from "@/stores/settings.js";
+import { ref, watchEffect } from 'vue';
 
 /**
- * useSEO.js — Dynamic Meta Tag Manager
- * 
- * Provides a simple function to update document title and meta description.
- * It automatically appends the Site Name from settings to the title.
- * 
- * Usage:
- *   const { setMeta } = useSEO()
- *   setMeta("Product Name", "Product description specifically for SEO...")
+ * Composable for managing dynamic SEO meta tags and JSON-LD schema.
  */
 export function useSEO() {
-  const settingsStore = useSettingsStore();
+  const seoData = ref({
+    title: '',
+    description: '',
+    image: '',
+    url: '',
+    jsonLd: null
+  });
 
-  function setMeta(title, description = "") {
-    // ── Update Title ──────────────────────────────────────────
-    const siteName = settingsStore.siteName || "ShopWave";
-    const finalTitle = title ? `${title} | ${siteName}` : siteName;
-    document.title = finalTitle;
+  const setMeta = (title, description, image = '', url = '') => {
+    seoData.value = { ...seoData.value, title, description, image, url };
+  };
 
-    // ── Update Meta Description ────────────────────────────────
+  const setJsonLd = (jsonLd) => {
+    seoData.value.jsonLd = jsonLd;
+  };
+
+  watchEffect(() => {
+    const { title, description, image, url, jsonLd } = seoData.value;
+
+    if (title) {
+      document.title = title;
+    }
+
+    // Update Meta Description
     if (description) {
       let metaDesc = document.querySelector('meta[name="description"]');
       if (!metaDesc) {
-        metaDesc = document.createElement("meta");
-        metaDesc.name = "description";
+        metaDesc = document.createElement('meta');
+        metaDesc.name = 'description';
         document.head.appendChild(metaDesc);
       }
-      metaDesc.setAttribute("content", description);
+      metaDesc.content = description;
     }
-    
-    // ── OpenGraph Tags (Optional but recommended) ─────────────
-    const setOG = (property, content) => {
-      let el = document.querySelector(`meta[property="${property}"]`);
-      if (!el) {
-        el = document.createElement("meta");
-        el.setAttribute("property", property);
-        document.head.appendChild(el);
+
+    // Update OG Tags
+    const ogTags = [
+      { property: 'og:title', content: title },
+      { property: 'og:description', content: description },
+      { property: 'og:image', content: image },
+      { property: 'og:url', content: url },
+      { property: 'og:type', content: 'website' },
+    ];
+
+    ogTags.forEach(({ property, content }) => {
+      if (!content) return;
+      let tag = document.querySelector(`meta[property="${property}"]`);
+      if (!tag) {
+        tag = document.createElement('meta');
+        tag.setAttribute('property', property);
+        document.head.appendChild(tag);
       }
-      el.setAttribute("content", content);
-    };
+      tag.content = content;
+    });
 
-    if (title) setOG("og:title", finalTitle);
-    if (description) setOG("og:description", description);
-    setOG("og:site_name", siteName);
-  }
+    // Update JSON-LD Schema
+    if (jsonLd) {
+      let script = document.querySelector('script[type="application/ld+json"]');
+      if (!script) {
+        script = document.createElement('script');
+        script.type = 'application/ld+json';
+        document.head.appendChild(script);
+      }
+      script.text = JSON.stringify(jsonLd);
+    }
+  });
 
-  return { setMeta };
+  return { setMeta, setJsonLd };
 }
