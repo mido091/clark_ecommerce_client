@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" rx="48" fill="#F6F1E8"/>
+  <rect x="52" y="52" width="1096" height="696" rx="40" fill="#7A563C" opacity="0.14"/>
+  <circle cx="934" cy="188" r="132" fill="#2C7A5B" opacity="0.18"/>
+  <circle cx="236" cy="602" r="118" fill="#2C7A5B" opacity="0.12"/>
+  <text x="600" y="420" text-anchor="middle" font-size="112" font-family="Arial, sans-serif" fill="#6B4F36">Shoes</text>
+</svg>

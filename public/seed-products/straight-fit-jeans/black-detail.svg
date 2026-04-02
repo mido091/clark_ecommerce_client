@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="768" height="768" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="40" fill="#F7F2EA" />
+  <rect x="24" y="24" width="464" height="464" rx="30" fill="#D7D9E0" opacity="0.42" />
+  <circle cx="410" cy="104" r="52" fill="#23252B" opacity="0.16" />
+  <circle cx="108" cy="126" r="36" fill="#23252B" opacity="0.12" />
+  
+      <ellipse cx="256" cy="430" rx="118" ry="18" fill="rgba(35, 37, 43, 0.18)" />
+      <path d="M202 116 L310 116 L324 214 L298 404 L260 404 L252 278 L244 404 L206 404 L188 214 Z" fill="#23252B" />
+      <path d="M244 116 L252 278 L260 116" stroke="#D7D9E0" stroke-width="8" opacity="0.48" />
+      <path d="M206 154 L244 154 M268 154 L306 154" stroke="#D7D9E0" stroke-width="7" opacity="0.4" />
+      
+      <path d="M214 212 L238 304 M298 212 L274 304" stroke="#D7D9E0" stroke-width="6" opacity="0.4" />
+    
+  <rect x="48" y="48" width="144" height="34" rx="17" fill="#FFFFFF" opacity="0.92" />
+  <text x="120" y="70" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#5B4636">DETAIL VIEW</text>
+  <text x="256" y="458" text-anchor="middle" font-size="26" font-family="Arial, sans-serif" letter-spacing="2" fill="#4B3728">STRAIGHT FIT JEANS</text>
+  <text x="256" y="486" text-anchor="middle" font-size="22" font-family="Arial, sans-serif" fill="#23252B">أسود</text>
+</svg>

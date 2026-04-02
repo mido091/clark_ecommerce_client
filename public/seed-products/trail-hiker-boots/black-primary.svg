@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="768" height="768" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="40" fill="#F7F2EA" />
+  <rect x="24" y="24" width="464" height="464" rx="30" fill="#D7D9E0" opacity="0.42" />
+  <circle cx="410" cy="104" r="52" fill="#23252B" opacity="0.16" />
+  <circle cx="108" cy="126" r="36" fill="#23252B" opacity="0.12" />
+  
+    <ellipse cx="252" cy="426" rx="116" ry="16" fill="rgba(35, 37, 43, 0.16)" />
+    <path d="M154 324 L160 230 Q162 190 198 182 L246 176 Q286 174 298 204 L302 250 L316 262 Q344 286 336 334 L240 334 Q202 334 154 324 Z" fill="#23252B" />
+    <path d="M150 334 Q188 374 246 374 L334 374 Q348 374 350 362 Q350 348 338 344 L314 338 Q284 332 258 314 L220 286 Q198 270 168 270 Q146 270 136 288 Q126 306 150 334 Z" fill="#F4EFE7" />
+    <path d="M190 270 L274 270 M182 290 L286 290 M176 310 L296 310" stroke="#D7D9E0" stroke-width="6" stroke-linecap="round" opacity="0.72" />
+    <path d="M164 340 Q216 360 330 350" stroke="rgba(35, 37, 43, 0.18)" stroke-width="6" stroke-linecap="round" />
+  
+  <rect x="48" y="48" width="144" height="34" rx="17" fill="#FFFFFF" opacity="0.92" />
+  <text x="120" y="70" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#5B4636">COLOR VIEW</text>
+  <text x="256" y="458" text-anchor="middle" font-size="26" font-family="Arial, sans-serif" letter-spacing="2" fill="#4B3728">TRAIL HIKER BOOTS</text>
+  <text x="256" y="486" text-anchor="middle" font-size="22" font-family="Arial, sans-serif" fill="#23252B">أسود</text>
+</svg>

@@ -1,7 +1,27 @@
+/**
+ * @file router/index.js
+ * @description Vue Router configuration for the application.
+ *
+ * Manages all application routes, lazy-loading for performance, and route guarding.
+ *
+ * Route Guards:
+ *  The `beforeEach` navigation guard enforces four levels of access control:
+ *   1. `requiresAuth`  — User must be logged in. Returns to `/login` if not.
+ *   2. `requiresAdmin` — User must have the 'admin' or 'owner' role.
+ *   3. `requiresOwner` — User must specifically be the 'owner' (super-admin).
+ *   4. `guestOnly`     — User must be logged OUT (used for login/register pages).
+ *
+ * Performance:
+ *  All routes use dynamic imports `() => import(...)`. This triggers Vite to
+ *  code-split the build, meaning the user only downloads the JavaScript for
+ *  a page when they actually visit it.
+ */
+
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "@/stores/auth.js";
 
-// Lazy-loaded page components for code splitting
+// ── Lazy-loaded Page Components ──────────────────────────────────────────────
+// Dynamically imported to reduce initial bundle size (Code Splitting)
 const HomePage = () => import("@/pages/HomePage.vue");
 const ProductListPage = () => import("@/pages/ProductListPage.vue");
 const ProductDetailPage = () => import("@/pages/ProductDetailPage.vue");
@@ -17,7 +37,7 @@ const WishlistPage = () => import("@/pages/WishlistPage.vue");
 const ContactPage = () => import("@/pages/ContactPage.vue");
 const MaintenancePage = () => import("@/pages/MaintenancePage.vue");
 
-// Admin pages
+// ── Lazy-loaded Admin Pages ──────────────────────────────────────────────────
 const AdminLayout = () => import("@/layouts/AdminLayout.vue");
 const AdminDashboard = () => import("@/pages/admin/DashboardPage.vue");
 const AdminProducts = () => import("@/pages/admin/ProductsPage.vue");
@@ -31,14 +51,15 @@ const AdminMessages = () => import("@/pages/admin/MessagesPage.vue");
 const AdminCoupons = () => import("@/pages/admin/CouponsPage.vue");
 const AdminShipping = () => import("@/pages/admin/ShippingPage.vue");
 
+// ── Route Definitions ─────────────────────────────────────────────────────────
 const routes = [
-  // ── Maintenance / Error Boundary ──────────────────────────
+  // ── Maintenance / Error Boundary ──
   {
     path: "/maintenance",
     name: "maintenance",
     component: MaintenancePage,
   },
-  // ── Public routes ─────────────────────────────────────────
+  // ── Public routes ──
   {
     path: "/",
     name: "home",
@@ -63,7 +84,7 @@ const routes = [
     path: "/login",
     name: "login",
     component: LoginPage,
-    meta: { guestOnly: true }, // Redirect logged-in users away
+    meta: { guestOnly: true }, // Redirect existing logged-in users away from login
   },
   {
     path: "/register",
@@ -72,12 +93,12 @@ const routes = [
     meta: { guestOnly: true },
   },
 
-  // ── User-protected routes ─────────────────────────────────
+  // ── User-protected routes ──
   {
     path: "/cart",
     name: "cart",
     component: CartPage,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true }, // Valid login required
   },
   {
     path: "/checkout",
@@ -109,7 +130,7 @@ const routes = [
     component: WishlistPage,
   },
 
-  // ── Admin routes ──────────────────────────────────────────
+  // ── Admin routes ──
   {
     path: "/admin",
     component: AdminLayout,
@@ -149,14 +170,13 @@ const routes = [
         path: "settings",
         name: "admin-settings",
         component: AdminSettings,
-        meta: { requiresAuth: true, requiresOwner: true },
+        meta: { requiresAuth: true, requiresOwner: true }, // Strictest guard (Owner only)
       },
       {
         path: "users",
         name: "admin-users",
         component: AdminUsers,
-        // Hard-guarded at route level — only owner role gets through
-        meta: { requiresAuth: true, requiresOwner: true },
+        meta: { requiresAuth: true, requiresOwner: true }, // Users management is Owner only
       },
       {
         path: "reviews",
@@ -176,8 +196,9 @@ const routes = [
     ],
   },
 
-  // ── Catch-all 404 ─────────────────────────────────────────
+  // ── Catch-all 404 ──
   {
+    // Match any path not defined above and show the 404 page
     path: "/:pathMatch(.*)*",
     name: "not-found",
     component: NotFoundPage,
@@ -187,35 +208,41 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
-  // Scroll to top on each navigation
+  // Automatically scroll to the top of the page when navigating to a new route
   scrollBehavior: () => ({ top: 0 }),
 });
 
-// ── Navigation guards ─────────────────────────────────────
+// ── Global Navigation Guards ──────────────────────────────────────────────────
+/**
+ * Executes before EVERY route change to enforce security rules based on the route's `meta` tags.
+ */
 router.beforeEach((to, _from, next) => {
   const auth = useAuthStore();
 
-  // Route requires authentication
+  // 1. Guard: requiresAuth (User must be logged in)
   if (to.meta.requiresAuth && !auth.isLoggedIn) {
+    // Pass the destination URL as a query param so we can redirect them back after they log in
     return next({ name: "login", query: { redirect: to.fullPath } });
   }
 
-  // Route requires admin role
+  // 2. Guard: requiresAdmin (User must be an 'admin' or 'owner')
   if (to.meta.requiresAdmin && !auth.isAdmin) {
     return next({ name: "home" });
   }
 
-  // Route requires owner role (strictest guard)
+  // 3. Guard: requiresOwner (Strictest — User must be the 'owner')
   if (to.meta.requiresOwner && !auth.isOwner) {
-    // Admins are redirected to the dashboard; regular users to home
+    // If they are an admin trying to access an owner page (e.g. Settings), kick them to admin dash.
+    // Otherwise, kick them to the public home page.
     return next({ name: auth.isAdmin ? "admin-dashboard" : "home" });
   }
 
-  // Route for guests only (e.g., login/register) — redirect logged-in users
+  // 4. Guard: guestOnly (User must NOT be logged in, e.g. Login or Register pages)
   if (to.meta.guestOnly && auth.isLoggedIn) {
     return next({ name: "home" });
   }
 
+  // All checks passed, allow navigation
   next();
 });
 

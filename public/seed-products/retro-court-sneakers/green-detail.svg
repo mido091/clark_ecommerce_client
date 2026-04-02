@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="768" height="768" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="40" fill="#F7F2EA" />
+  <rect x="24" y="24" width="464" height="464" rx="30" fill="#D2EEE0" opacity="0.42" />
+  <circle cx="410" cy="104" r="52" fill="#2C7A5B" opacity="0.16" />
+  <circle cx="108" cy="126" r="36" fill="#2C7A5B" opacity="0.12" />
+  
+      <ellipse cx="256" cy="430" rx="110" ry="16" fill="rgba(44, 122, 91, 0.16)" />
+      <path d="M178 284 C196 208, 320 198, 340 284 C344 304, 332 334, 314 352 L286 380 L224 380 L196 352 C180 334, 170 306, 178 284 Z" fill="#2C7A5B" />
+      <path d="M224 244 L288 244 L300 334 L212 334 Z" fill="#D2EEE0" opacity="0.34" />
+      <path d="M232 258 L280 258 M228 280 L284 280 M224 302 L288 302" stroke="#D2EEE0" stroke-width="6" stroke-linecap="round" opacity="0.85" />
+      <path d="M224 380 L288 380" stroke="#EDE9E0" stroke-width="14" stroke-linecap="round" />
+    
+  <rect x="48" y="48" width="144" height="34" rx="17" fill="#FFFFFF" opacity="0.92" />
+  <text x="120" y="70" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#5B4636">COLOR VIEW</text>
+  <text x="256" y="458" text-anchor="middle" font-size="26" font-family="Arial, sans-serif" letter-spacing="2" fill="#4B3728">RETRO COURT SNEAKE</text>
+  <text x="256" y="486" text-anchor="middle" font-size="22" font-family="Arial, sans-serif" fill="#2C7A5B">أخضر</text>
+</svg>

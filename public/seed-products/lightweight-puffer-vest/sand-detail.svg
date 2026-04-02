@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="768" height="768" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="40" fill="#F7F2EA" />
+  <rect x="24" y="24" width="464" height="464" rx="30" fill="#F7EBD7" opacity="0.42" />
+  <circle cx="410" cy="104" r="52" fill="#D0B183" opacity="0.16" />
+  <circle cx="108" cy="126" r="36" fill="#D0B183" opacity="0.12" />
+  
+      <ellipse cx="256" cy="430" rx="128" ry="18" fill="rgba(208, 177, 131, 0.18)" />
+      <path d="M200 118 L236 152 L236 392 L276 392 L276 152 L312 118 L332 160 L304 392 L208 392 L180 160 Z" fill="#D0B183" />
+      
+      <path d="M252 150 L252 394" stroke="#F7EBD7" stroke-width="10" />
+         <circle cx="252" cy="212" r="5" fill="rgba(247, 235, 215, 0.85)" />
+         <circle cx="252" cy="246" r="5" fill="rgba(247, 235, 215, 0.85)" />
+         <circle cx="252" cy="280" r="5" fill="rgba(247, 235, 215, 0.85)" />
+      
+      <path d="M222 196 L290 196" stroke="#F7EBD7" stroke-width="8" opacity="0.48" />
+      <rect x="208" y="214" width="96" height="150" rx="18" fill="rgba(247, 235, 215, 0.12)" />
+    
+  <rect x="48" y="48" width="144" height="34" rx="17" fill="#FFFFFF" opacity="0.92" />
+  <text x="120" y="70" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#5B4636">DETAIL VIEW</text>
+  <text x="256" y="458" text-anchor="middle" font-size="26" font-family="Arial, sans-serif" letter-spacing="2" fill="#4B3728">LIGHTWEIGHT PUFFER</text>
+  <text x="256" y="486" text-anchor="middle" font-size="22" font-family="Arial, sans-serif" fill="#D0B183">رملي</text>
+</svg>

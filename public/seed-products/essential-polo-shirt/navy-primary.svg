@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="768" height="768" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="40" fill="#F7F2EA" />
+  <rect x="24" y="24" width="464" height="464" rx="30" fill="#D3DBF0" opacity="0.42" />
+  <circle cx="410" cy="104" r="52" fill="#273B64" opacity="0.16" />
+  <circle cx="108" cy="126" r="36" fill="#273B64" opacity="0.12" />
+  
+      <ellipse cx="256" cy="430" rx="120" ry="18" fill="rgba(39, 59, 100, 0.18)" />
+      <path d="M164 154 L208 112 L228 136 L228 182 L284 182 L284 136 L304 112 L348 154 L326 214 L302 204 L302 388 L210 388 L210 204 L186 214 Z" fill="#273B64" />
+      <path d="M220 108 L256 138 L292 108 L302 144 L274 164 L256 152 L238 164 L210 144 Z" fill="#D3DBF0" opacity="0.95" />
+      <path d="M210 204 L302 204" stroke="#D3DBF0" stroke-width="8" opacity="0.55" />
+      
+    
+  <rect x="48" y="48" width="144" height="34" rx="17" fill="#FFFFFF" opacity="0.92" />
+  <text x="120" y="70" text-anchor="middle" font-size="18" font-family="Arial, sans-serif" fill="#5B4636">COLOR VIEW</text>
+  <text x="256" y="458" text-anchor="middle" font-size="26" font-family="Arial, sans-serif" letter-spacing="2" fill="#4B3728">ESSENTIAL POLO SHI</text>
+  <text x="256" y="486" text-anchor="middle" font-size="22" font-family="Arial, sans-serif" fill="#273B64">كحلي</text>
+</svg>

@@ -1,41 +1,42 @@
 /**
- * useScriptInjector.js — Safe DOM Script Injection Composable
+ * @file useScriptInjector.js (Composable)
+ * @description Safe DOM Script Injection Engine.
  *
- * Safely injects raw HTML strings (containing <script> and other tags) into
- * document.head or document.body. Unlike v-html, this approach ensures that
- * <script> elements are actually executed by the browser.
+ * Injecting raw HTML strings (containing `<script>` blocks) directly using Vue's
+ * `v-html` directive doesn't work out-of-the-box — modern browsers outright refuse
+ * to evaluate and execute Javascript introduced via `innerHTML` as a security precaution.
  *
- * Usage:
- *   const { injectScripts } = useScriptInjector()
- *   injectScripts(headerHtml, footerHtml)
+ * This composable bypasses that hurdle securely by constructing raw document elements,
+ * specifically converting passive script blocks back into active `HTMLScriptElement` blocks.
  *
- * Call injectScripts once per session — the composable keeps an internal flag
- * to prevent duplicate injection across hot-reloads or route changes.
+ * Primary Use Case:
+ *  Dynamically applying Marketing Tool Pixels (Google Analytics, Meta Pixel).
+ *  These snippets are configured by the admin dashboard and applied on the client layer.
  *
- * Security note:
- *   Only Google Ads / Analytics snippets should be placed in these fields.
- *   The backend MUST restrict access to the PUT /settings endpoint to
- *   admin/owner roles — never expose this form to regular users.
+ * Security Caution:
+ *  Because this manually executes arbitrary JS configured from the database, the API's
+ *  `/settings` update controls MUST remain strictly locked behind Super Admin roles
+ *  so malicious scripts cannot be driven into the payload.
  */
 
 let injected = false;
 
 /**
- * Re-create a <script> element so the browser actually executes it.
- * Cloning an existing <script> node does NOT re-execute it.
+ * Re-create a <script> element natively so the browser treats it as executable code.
+ * (Merely cloning an existing <script> node does NOT re-execute its context.)
  *
- * @param {HTMLScriptElement} sourceEl
- * @returns {HTMLScriptElement}
+ * @param {HTMLScriptElement} sourceEl - The initial passive node from innerHTML parser.
+ * @returns {HTMLScriptElement} - An actively parsed Javascript fragment block.
  */
 function cloneExecutableScript(sourceEl) {
   const script = document.createElement("script");
 
-  // Copy all attributes (src, async, defer, type, data-* etc.)
+  // Copy all structural attributes (src, async, defer, type, data-* etc.)
   Array.from(sourceEl.attributes).forEach((attr) => {
     script.setAttribute(attr.name, attr.value);
   });
 
-  // Copy inline script text (must set textContent, not innerHTML)
+  // Transfer textual script instructions (Must use textContent, NOT innerHTML, for scripts)
   if (sourceEl.textContent) {
     script.textContent = sourceEl.textContent;
   }
@@ -44,18 +45,20 @@ function cloneExecutableScript(sourceEl) {
 }
 
 /**
- * Parse an HTML string and append each top-level element to `container`.
- * <script> elements are re-created so the browser executes them.
+ * Process a raw HTML string and graft each top-level element into a specified HTML container.
+ * Crucially, blocks tagged as "SCRIPT" face a deep-copy reboot so the browser engine actually executes them.
  *
- * @param {string} htmlString  Raw HTML to inject
- * @param {Element} container  document.head or document.body
+ * @param {string} htmlString  - Raw textual HTML
+ * @param {Element} container  - Either `document.head` or `document.body` DOM targets
  */
 function injectHtml(htmlString, container) {
   if (!htmlString?.trim()) return;
 
+  // Use a detached div as a temporary parser space
   const tmp = document.createElement("div");
   tmp.innerHTML = htmlString;
 
+  // Iterate over extracted children and mount to main document
   Array.from(tmp.children).forEach((el) => {
     if (el.tagName === "SCRIPT") {
       container.appendChild(cloneExecutableScript(el));
@@ -66,32 +69,36 @@ function injectHtml(htmlString, container) {
 }
 
 /**
- * Composable factory.
- *
- * Calling `useScriptInjector()` returns a single `injectScripts` function.
- * The first call with non-empty strings performs the injection; subsequent
- * calls are silently ignored (session-level singleton).
+ * Calling `useScriptInjector()` returns a single `injectScripts` procedure.
+ * Due to the `injected` boolean singleton residing outside the function block, 
+ * repeated invocations within the same browser session are aborted silently.
  */
 export function useScriptInjector() {
+
   /**
-   * Inject header_scripts into <head> and footer_scripts into <body>.
+   * Dispatches snippets to their exact hierarchical regions.
+   * Reconstructs standard `gtag.js` patterns if respective analytical IDs were configured.
    *
-   * @param {string} [headerHtml]  Scripts for <head>
-   * @param {string} [footerHtml]  Scripts for <body>
-   * @param {boolean} [force=false] Re-inject even if already done (dev use)
+   * @param {string} [headerHtml]  User-defined code for <head>
+   * @param {string} [footerHtml]  User-defined code for <body>
+   * @param {string} [gaId]        Google Analytics Property ID (Format: "G-XXXXXXXX")
+   * @param {string} [adsId]       Google Ads Client ID (Format: "AW-XXXXXXXX")
+   * @param {boolean} [force=false] Bypasses injection duplicate guard boolean (useful for dev)
    */
   function injectScripts(headerHtml, footerHtml, gaId = "", adsId = "", force = false) {
     if (injected && !force) return;
 
-    // 1. Google Tag (gtag.js) Boilerplate
-    // If either ID is provided, we inject the foundational Google Tag script
+    // ── 1. Google Tag Manager Auto-Wiring Boilerplate ────────────────────────
     const primaryId = gaId || adsId;
+    
     if (primaryId) {
+      // 1A. Call remote Google source loader library
       const gTagScript = document.createElement("script");
       gTagScript.async = true;
       gTagScript.src = `https://www.googletagmanager.com/gtag/js?id=${primaryId}`;
       document.head.appendChild(gTagScript);
 
+      // 1B. Setup local window variable space and configuration identifiers
       const gTagConfig = document.createElement("script");
       gTagConfig.textContent = `
         window.dataLayer = window.dataLayer || [];
@@ -103,7 +110,7 @@ export function useScriptInjector() {
       document.head.appendChild(gTagConfig);
     }
 
-    // 2. Custom HTML Scripts from Database
+    // ── 2. Arbitrary Source Code Mount Hook ──────────────────────────────────
     if (headerHtml) injectHtml(headerHtml, document.head);
     if (footerHtml) injectHtml(footerHtml, document.body);
 
