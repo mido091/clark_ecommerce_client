@@ -56,6 +56,9 @@ export const useSettingsStore = defineStore("settings", () => {
     Array.isArray(data.value.shipping_governorates) ? data.value.shipping_governorates : []
   );
 
+  /** Hero banner image URL — falls back to null so components can use a default */
+  const heroImageUrl = computed(() => data.value.hero_image_url || null);
+
   // ── Actions ──────────────────────────────────────────────────────────────────
 
   /**
@@ -128,6 +131,7 @@ export const useSettingsStore = defineStore("settings", () => {
     socialGmail,
     socialWhatsapp,
     shippingGovernorates,
+    heroImageUrl,
 
     // Actions
     fetchSettings,

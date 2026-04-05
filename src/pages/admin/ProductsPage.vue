@@ -502,7 +502,12 @@
                         :key="getVariantKey(combo.color_key, combo.size_value)"
                         class="rounded-2xl border border-borderThin bg-surface p-4"
                       >
-                        <div class="mb-2 text-xs font-bold uppercase tracking-widest text-textSecondary">
+                        <div class="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-textSecondary">
+                          <span
+                            v-if="combo.color_key && getColorState(combo.color_key)"
+                            class="h-3 w-3 rounded-full border border-borderThin shadow-sm"
+                            :style="{ backgroundColor: getColorState(combo.color_key).value || '#c8a96b' }"
+                          ></span>
                           {{ getComboLabel(combo) }}
                         </div>
                         <input
@@ -941,10 +946,18 @@ function setVariantStock(colorKey, sizeValue, value) {
   if (hasVariants.value) form.stock = totalVariantStock.value;
 }
 
+function getColorState(clientKey) {
+  return form.colors.find((entry) => entry.client_key === clientKey);
+}
+
 function getComboLabel(combo) {
-  const color = combo.color_key ? form.colors.find((entry) => entry.client_key === combo.color_key) : null;
-  if (color && combo.size_value) return `${color.name || "Color"} / ${combo.size_value}`;
-  if (color) return color.name || "Color";
+  const colorIndex = combo.color_key ? form.colors.findIndex((entry) => entry.client_key === combo.color_key) : -1;
+  const color = colorIndex >= 0 ? form.colors[colorIndex] : null;
+
+  const colorLabel = color ? (color.name || `${uiText.value.colorLabel} ${colorIndex + 1}`) : null;
+
+  if (colorLabel && combo.size_value) return `${colorLabel} / ${combo.size_value}`;
+  if (colorLabel) return colorLabel;
   return combo.size_value || "Base";
 }
 

@@ -66,8 +66,8 @@
             class="relative h-full w-full rounded-[2.5rem] lg:rounded-[4rem] overflow-hidden shadow-2xl shadow-primary-900/20 dark:shadow-black/50 border border-white/20 dark:border-white/5 bg-surface text-center flex flex-col items-center justify-center"
           >
             <img
-              :src="optimizeImg('https://res.cloudinary.com/doprwyj9v/image/upload/q_auto/f_auto/v1775171336/clark_odk5k7.jpg', 1200, 80)"
-              :srcset="`${optimizeImg('https://res.cloudinary.com/doprwyj9v/image/upload/q_auto/f_auto/v1775171336/clark_odk5k7.jpg', 1200, 80)} 1200w, ${optimizeImg('https://res.cloudinary.com/doprwyj9v/image/upload/q_auto/f_auto/v1775171336/clark_odk5k7.jpg', 800, 80)} 800w`"
+              :src="heroSrc"
+              :srcset="heroSrc !== FALLBACK_HERO ? undefined : `${optimizeImg(FALLBACK_HERO, 1200, 80)} 1200w, ${optimizeImg(FALLBACK_HERO, 800, 80)} 800w`"
               sizes="100vw"
               width="1200"
               height="800"
@@ -304,16 +304,25 @@
 </template>
 
 <script setup>
-import { ref, onMounted, inject } from "vue";
+import { ref, onMounted, inject, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { ChevronRight } from "lucide-vue-next";
 import ProductCard from "@/components/ProductCard.vue";
 import { useUiStore } from "@/stores/ui.js";
+import { useSettingsStore } from "@/stores/settings.js";
 import api from "@/axios.js";
 
 const { t } = useI18n();
 const ui = useUiStore();
+const settingsStore = useSettingsStore();
 const showToast = inject("showToast");
+
+/** 
+ * Hero image: uses the DB-managed image from settings if available,
+ * falls back to the default Cloudinary image otherwise.
+ */
+const FALLBACK_HERO = 'https://res.cloudinary.com/doprwyj9v/image/upload/q_auto/f_auto/v1775171336/clark_odk5k7.jpg';
+const heroSrc = computed(() => settingsStore.heroImageUrl || FALLBACK_HERO);
 
 const categories = ref([]);
 const featuredProducts = ref([]);

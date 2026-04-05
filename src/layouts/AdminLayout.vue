@@ -303,7 +303,7 @@ const allNavLinks = computed(() => [
   { to: "/admin/categories", icon: Tag, label: t("admin.categories") },
   { to: "/admin/coupons", icon: Ticket, label: t("admin.coupons.title") || "Coupons" },
   { to: "/admin/orders", icon: ShoppingBag, label: t("admin.orders") },
-  { to: "/admin/payments", icon: CreditCard, label: t("admin.payments") },
+  // { to: "/admin/payments", icon: CreditCard, label: t("admin.payments") },
   { to: "/admin/shipping", icon: Truck, label: t("settings.sectionShipping") },
   {
     to: "/admin/reviews",

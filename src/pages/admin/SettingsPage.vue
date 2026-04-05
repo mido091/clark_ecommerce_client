@@ -210,10 +210,41 @@
                     </template>
                   </ImageUploadSingle>
                 </div>
+
+                <!-- Hero Banner Image Card -->
+                <div class="p-6 rounded-[2rem] bg-surface/40 border border-slate-100 dark:border-slate-800 shadow-sm transition-all duration-500 hover:shadow-xl hover:border-primary-500/20 group/hero-card md:col-span-2">
+                  <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                      <div class="p-2.5 rounded-xl bg-violet-500/10 text-violet-500">
+                        <ImageIcon class="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 class="text-[11px] font-black uppercase tracking-widest text-textPrimary leading-none">Hero Banner Image</h4>
+                        <p class="text-[9px] font-bold text-textSecondary uppercase tracking-tighter mt-1 opacity-70">Main homepage hero image (right side visual)</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <ImageUploadSingle
+                    v-model="heroImageModel"
+                    :label="null"
+                    :max-size="5 * 1024 * 1024"
+                    accept="image/jpeg,image/png,image/webp"
+                    :uploading="saving"
+                    :readonly="!auth.isOwner"
+                    aspect="aspect-[4/3]"
+                    fit="cover"
+                  >
+                    <template #footer>
+                      <span class="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-tighter bg-slate-100 dark:bg-slate-800/50 px-2 py-1 rounded-lg">Max 5MB — JPG / PNG / WEBP</span>
+                    </template>
+                  </ImageUploadSingle>
+                </div>
               </div>
             </div>
           </div>
         </section>
+
 
         <!-- Contact Section -->
         <section id="contact" class="card group overflow-hidden border-borderThin hover:border-primary-500/30 transition-all duration-500">
@@ -469,6 +500,7 @@ const form = reactive({
   logo_url: "",
   favicon_url: "",
   footer_logo_url: "",
+  hero_image_url: "",
   contact_email: "",
   whatsapp_number: "",
   currency_code: "",
@@ -493,6 +525,7 @@ const feedbackType = ref("success");
 const logoModel = ref(null);
 const faviconModel = ref(null);
 const footerLogoModel = ref(null);
+const heroImageModel = ref(null);
 
 // function onLogoFileChange(event) { ... } removed in favor of ImageUploadSingle
 // function onFaviconFileChange(event) { ... } removed in favor of ImageUploadSingle
@@ -518,10 +551,12 @@ function syncFormFromStore() {
   form.social_gmail = d.social_gmail || "";
   form.wallet_number = d.wallet_number || "";
   form.instapay_handle = d.instapay_handle || "";
+  form.hero_image_url = d.hero_image_url || "";
 
   logoModel.value = d.logo_url || null;
   faviconModel.value = d.favicon_url || null;
   footerLogoModel.value = d.footer_logo_url || null;
+  heroImageModel.value = d.hero_image_url || null;
 }
 
 onMounted(async () => {
@@ -576,7 +611,8 @@ async function saveSettings() {
     if (
       logoModel.value instanceof File ||
       faviconModel.value instanceof File ||
-      footerLogoModel.value instanceof File
+      footerLogoModel.value instanceof File ||
+      heroImageModel.value instanceof File
     ) {
       const fd = new FormData();
       Object.entries(textFields).forEach(([k, v]) => fd.append(k, v));
@@ -590,13 +626,17 @@ async function saveSettings() {
       if (footerLogoModel.value instanceof File) fd.append("footer_logo", footerLogoModel.value);
       else fd.append("footer_logo_url", typeof footerLogoModel.value === 'string' ? footerLogoModel.value : (form.footer_logo_url ?? ""));
 
+      if (heroImageModel.value instanceof File) fd.append("hero_image", heroImageModel.value);
+      else fd.append("hero_image_url", typeof heroImageModel.value === 'string' ? heroImageModel.value : (form.hero_image_url ?? ""));
+
       payload = fd;
     } else {
       payload = { 
         ...textFields, 
         logo_url: typeof logoModel.value === 'string' ? logoModel.value : (form.logo_url ?? ""),
         favicon_url: typeof faviconModel.value === 'string' ? faviconModel.value : (form.favicon_url ?? ""),
-        footer_logo_url: typeof footerLogoModel.value === 'string' ? footerLogoModel.value : (form.footer_logo_url ?? "")
+        footer_logo_url: typeof footerLogoModel.value === 'string' ? footerLogoModel.value : (form.footer_logo_url ?? ""),
+        hero_image_url: typeof heroImageModel.value === 'string' ? heroImageModel.value : (form.hero_image_url ?? ""),
       };
     }
 
