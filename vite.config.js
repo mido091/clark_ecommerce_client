@@ -16,7 +16,7 @@ export default defineConfig({
     proxy: {
       // Proxy API requests to the backend during development
       "/api": {
-        target: "http://localhost:5000",
+        target: "https://clark-ecommerce-server-brown.vercel.app",
         changeOrigin: true,
         secure: false,
       },

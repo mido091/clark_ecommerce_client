@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://clark-ecommerce-server.vercel.app/api/:path*"
+      "destination": "https://clark-ecommerce-server-brown.vercel.app/api/:path*"
     },
     {
       "source": "/((?!api/).*)",
